@@ -16,7 +16,15 @@ if ($action == "select"){
     }
 
     $stmt = $strExe->readAttend($condition);
+    $num_row = $strExe->rowCount("attend_activity");
+
     $data_arr['rs'] = array();
+    
+    $totalRow = array(
+        'จำนวนคนเข้างาน'=>$num_row        
+    );
+    array_push($data_arr['rs'] ,$totalRow);
+
     foreach($stmt as $row){
         $item = array(
             'regisCode'=>$row['regis_code'],
@@ -28,22 +36,24 @@ if ($action == "select"){
             'OrgName'=>$row['org_name']
 
         );
+        
         array_push($data_arr['rs'] ,$item);
     }
     echo json_encode($data_arr);
 }
 
 else if ($action == "insert"){
-$regisCode = $_GET['regiscode'];
-$activityCode = $_GET['activitycode'];
 
-date_default_timezone_set("Asia/Bangkok");
-$result = date('Y/m/d');
-$date = date('d/m/Y', strtotime($result));
-$time = date('H:i:s');
+    $regisCode = $_GET['regiscode'];
+    $activityCode = $_GET['activitycode'];
 
-$stmt = $strExe->insert("attend_activity"," regis_code, created_time, created_date, activity_code ",
-" '$regisCode','$time','$date','$activityCode' ");
-}
+    date_default_timezone_set("Asia/Bangkok");
+    $result = date('Y/m/d');
+    $date = date('d/m/Y', strtotime($result));
+    $time = date('H:i:s');
+
+    $stmt = $strExe->insert("attend_activity"," regis_code, created_time, created_date, activity_code ",
+                            " '$regisCode','$time','$date','$activityCode' ");
+    }
 
 ?>

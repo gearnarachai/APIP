@@ -4,6 +4,11 @@ class ExecSQL{
     public function __construct($str_conn){
         $this->conn =$str_conn;
      }
+     
+     public function rowCount($tablename){
+        $sql =" SELECT COUNT(*) as num_row FROM ".$tablename;
+        return $this->numRow($sql);
+     }
 
      public function readAttend($condition){
         $sql =" SELECT  attend_activity.regis_code,created_date,created_time,activities.name  , CONCAT (initial.initial_name,' ',registration.name,' ',registration.lastname) as nameRe , registration.position,registration.org_name
@@ -21,16 +26,22 @@ class ExecSQL{
        return $this->read($sql);
     }
 
+    public function insert($tablename,$field,$value){
+        $stmt = $this->conn->prepare(" INSERT INTO $tablename ($field) VALUES ($value) ");
+        return $this->checkExe($stmt);
+      
+     }
+
+    public function numRow($sql){
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['num_row'];
+     }
      public function read($sql){
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt;
-     }
-
-     public function insert($tablename,$field,$value){
-        $stmt = $this->conn->prepare(" INSERT INTO $tablename ($field) VALUES ($value) ");
-        return $this->checkExe($stmt);
-      
      }
 
      private function checkExe($stmt){
